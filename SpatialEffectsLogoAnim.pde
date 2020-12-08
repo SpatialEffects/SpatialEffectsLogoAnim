@@ -4,7 +4,7 @@ int[][] result;
 float t;
 
 void setup() {
-  size(800, 600, P2D);
+  size(1024, 768, P2D);
   smooth(8);
   noFill();
 
@@ -14,7 +14,7 @@ void setup() {
 void draw() {
 
   if (!recording) {
-    t = mouseX*1.0/width;
+    t = mouseX * 1.0/width;
     draw_();
   } else {
     for (int i=0; i<width*height; i++)
@@ -56,7 +56,7 @@ boolean recording = false;
 
 
 
-int N = 360; // resolution of the calculations
+int N = 180; // resolution of the calculations
 int n = 7; // frequency of the wave
 float os;
 float R = 165, r; // R = circle diameter
@@ -68,21 +68,46 @@ float ease(float q){
   return 3*q*q - 2*q*q*q;
 }
 
-void drawCircle(float q, float radius, float offset, float strokeWeight, float amplitudeFactor, int frequency, int resolution){
+void drawCircle(float q, float radiusFactor, float offset, float strokeWeight, float amplitudeFactor, int frequency, int resolution){
+  strokeWeight(strokeWeight);
+
   beginShape();
   for (int i=0; i < resolution; i++) {
     progress = i * TWO_PI / resolution;
     os = map(cos(progress - TWO_PI * offset), -1, 1, 0, 1); // Normalize the cos between 0 to 1
-    os = amplitudeFactor * pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave height
-    r = R*(1 + os * cos(frequency * progress + 1.5 * TWO_PI * offset + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
+    os = amplitudeFactor * pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave amplitude
+    r = radiusFactor * (1 + os * cos(frequency * progress + 1.5 * TWO_PI * offset + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
     vertex(r * sin(progress), -r * cos(progress)); // add a vertex according to the radius
   }
   endShape(CLOSE);
 }
 
 void drawCircles() {
-  drawCircle(0, 165, mouseX * 1.0 / width, 6, 0.125, 7, 360);
-  drawCircle(PI, 165, mouseX * 1.0 / width, 6, 0.125, 7, 360);
+  float mouseAngle, mouseDistance;
+
+  PVector center = new PVector(width / 2, height / 2);
+  PVector baseVector = new PVector(0, -1); // Horizontal vector
+  PVector mouseVector = new PVector(mouseX - center.x, mouseY - center.y);
+  mouseAngle = angle(baseVector, mouseVector);
+  mouseAngle = mouseAngle / TWO_PI; // Normalize
+  mouseVector = new PVector(mouseX, mouseY);
+  mouseDistance = center.dist(mouseVector);
+
+  mouseDistance = mouseDistance / 10000;
+
+  drawCircle(0, 100, mouseAngle, 1, mouseDistance, 14, N);
+  drawCircle(PI, 150, mouseAngle, 6, mouseDistance, 14, N);
+  drawCircle(0, 200, mouseAngle, 11, mouseDistance, 14, N);
+  drawCircle(PI, 250, mouseAngle, 16, mouseDistance, 14, N);
+  drawCircle(0, 300, mouseAngle, 21, mouseDistance, 14, N);
+  drawCircle(PI, 350, mouseAngle, 26, mouseDistance, 14, N);
+  drawCircle(0, 400, mouseAngle, 31, mouseDistance, 14, N);
+}
+
+float angle(PVector v1, PVector v2) {
+  float a = atan2(v2.y, v2.x) - atan2(v1.y, v1.x);
+  if (a < 0) a += TWO_PI;
+  return a;
 }
 
 void draw_() {
@@ -90,7 +115,6 @@ void draw_() {
   pushMatrix(); // start transformation
   translate(width/2, height/2); // center 
   stroke(230); // set color of the stroke
-  strokeWeight(6); // set width of the stroke
   drawCircles(); // draw the circles
   popMatrix(); // end transformation
 }
