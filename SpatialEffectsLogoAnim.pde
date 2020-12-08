@@ -75,6 +75,7 @@ void drawCircle(float q, float radiusFactor, float offset, float strokeWeight, f
   for (int i=0; i < resolution; i++) {
     progress = i * TWO_PI / resolution;
     os = map(cos(progress - TWO_PI * offset), -1, 1, 0, 1); // Normalize the cos between 0 to 1
+    // The 2.75 below decides on what part of the circle the waves will be visible
     os = amplitudeFactor * pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave amplitude
     r = radiusFactor * (1 + os * cos(frequency * progress + 1.5 * TWO_PI + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
     vertex(r * sin(progress), -r * cos(progress)); // add a vertex according to the radius
