@@ -57,43 +57,32 @@ boolean recording = false;
 
 
 int N = 360; // resolution of the calculations
-int n = 7; // period of the wave
+int n = 7; // frequency of the wave
 float os;
 float R = 165, r; // R = circle diameter
 float th;
+float progress;
 color bg = color(42, 40, 38);
 
 float ease(float q){
   return 3*q*q - 2*q*q*q;
 }
 
-void drawCircle(float q){
+void drawCircle(float q, float radius, float offset, float strokeWeight, float amplitudeFactor, int frequency, int resolution){
   beginShape();
-  for (int i=0; i<N; i++) { // Loop van 0 tot 359
-    th = i*TWO_PI/N; // th = progress in radians rond de cirkel
-    os = map(cos(th-TWO_PI*t), -1, 1, 0, 1); // map the cos to 0 to 1 instead of -1 to 1, progress is offset by mouse X coords
-    os = 0.125*pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave height
-    r = R*(1+os*cos(n*th + 1.5*TWO_PI*t + q)); // calculation of the final distance from the center, modulates the circle diameter, inverts the wave via q if necessary
-    vertex(r*sin(th), -r*cos(th)); // draw the vertex according to 
-  }
-  endShape(CLOSE);
-}
-
-void drawCircle(float q, float radius, float offset, float strokeWeight){
-  beginShape();
-  for (int i=0; i<N; i++) { // Loop van 0 tot 359
-    th = i*TWO_PI/N; // th = progress in radians rond de cirkel
-    os = map(cos(th-TWO_PI*t), -1, 1, 0, 1); // map the cos to 0 to 1 instead of -1 to 1, progress is offset by mouse X coords
-    os = 0.125*pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave height
-    r = R*(1+os*cos(n*th + 1.5*TWO_PI*t + q)); // calculation of the final distance from the center, modulates the circle diameter, inverts the wave via q if necessary
-    vertex(r*sin(th), -r*cos(th)); // draw the vertex according to 
+  for (int i=0; i < resolution; i++) {
+    progress = i * TWO_PI / resolution;
+    os = map(cos(progress - TWO_PI * offset), -1, 1, 0, 1); // Normalize the cos between 0 to 1
+    os = amplitudeFactor * pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave height
+    r = R*(1 + os * cos(frequency * progress + 1.5 * TWO_PI * offset + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
+    vertex(r * sin(progress), -r * cos(progress)); // add a vertex according to the radius
   }
   endShape(CLOSE);
 }
 
 void drawCircles() {
-  drawCircle(0);
-  drawCircle(PI);
+  drawCircle(0, 165, mouseX * 1.0 / width, 6, 0.125, 7, 360);
+  drawCircle(PI, 165, mouseX * 1.0 / width, 6, 0.125, 7, 360);
 }
 
 void draw_() {
