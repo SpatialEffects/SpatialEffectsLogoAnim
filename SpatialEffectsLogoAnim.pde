@@ -4,7 +4,7 @@ int[][] result;
 float t;
 
 void setup() {
-  size(1024, 768, P2D);
+  size(1280, 1024, P2D);
   smooth(8);
   noFill();
 
@@ -76,7 +76,7 @@ void drawCircle(float q, float radiusFactor, float offset, float strokeWeight, f
     progress = i * TWO_PI / resolution;
     os = map(cos(progress - TWO_PI * offset), -1, 1, 0, 1); // Normalize the cos between 0 to 1
     os = amplitudeFactor * pow(os, 2.75); // exponential multiplication of the cos, plus dim it down a bit -> this modulates the wave amplitude
-    r = radiusFactor * (1 + os * cos(frequency * progress + 1.5 * TWO_PI * offset + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
+    r = radiusFactor * (1 + os * cos(frequency * progress + 1.5 * TWO_PI + q)); // calculation of the final vertex distance from the center, modulates the circle diameter, inverts the wave via q if necessary
     vertex(r * sin(progress), -r * cos(progress)); // add a vertex according to the radius
   }
   endShape(CLOSE);
@@ -92,15 +92,12 @@ void drawCircles() {
   mouseAngle = mouseAngle / TWO_PI; // Normalize
   mouseDistance = center.dist(mouseVector);
 
-  mouseDistance = mouseDistance / 10000; // Scale it down
+  mouseDistance = mouseDistance / 12500; // Scale it down
 
-  drawCircle(0, 100, mouseAngle, 1, mouseDistance, 14, N);
-  drawCircle(PI, 150, mouseAngle, 6, mouseDistance, 14, N);
-  drawCircle(0, 200, mouseAngle, 11, mouseDistance, 14, N);
-  drawCircle(PI, 250, mouseAngle, 16, mouseDistance, 14, N);
-  drawCircle(0, 300, mouseAngle, 21, mouseDistance, 14, N);
-  drawCircle(PI, 350, mouseAngle, 26, mouseDistance, 14, N);
-  drawCircle(0, 400, mouseAngle, 31, mouseDistance, 14, N);
+  for (int i = 0; i < 7; ++i) {
+    float q = (i % 2) * PI;
+    drawCircle(q, 100 + i * 50, mouseAngle, 1 + i * 5, mouseDistance, 14, N);
+  }
 }
 
 float angle(PVector v1, PVector v2) {
