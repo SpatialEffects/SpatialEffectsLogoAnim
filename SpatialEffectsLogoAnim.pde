@@ -85,15 +85,14 @@ void drawCircle(float q, float radiusFactor, float offset, float strokeWeight, f
 void drawCircles() {
   float mouseAngle, mouseDistance;
 
-  PVector center = new PVector(width / 2, height / 2);
+  PVector center = new PVector(0, 0);
   PVector baseVector = new PVector(0, -1); // Horizontal vector
-  PVector mouseVector = new PVector(mouseX - center.x, mouseY - center.y);
+  PVector mouseVector = new PVector(mouseX - width / 2, mouseY - height / 2); // mouse coords are not translated so we need to calculate it ourselves
   mouseAngle = angle(baseVector, mouseVector);
   mouseAngle = mouseAngle / TWO_PI; // Normalize
-  mouseVector = new PVector(mouseX, mouseY);
   mouseDistance = center.dist(mouseVector);
 
-  mouseDistance = mouseDistance / 10000;
+  mouseDistance = mouseDistance / 10000; // Scale it down
 
   drawCircle(0, 100, mouseAngle, 1, mouseDistance, 14, N);
   drawCircle(PI, 150, mouseAngle, 6, mouseDistance, 14, N);
